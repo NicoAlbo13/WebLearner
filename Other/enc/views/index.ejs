@@ -1,0 +1,9 @@
+<form action="/weather" method="post">
+    <p>Insert location</p>
+    <input type="text" name="country">
+    <input type="submit">
+</form>
+<% if (response) { %>
+    <p>Current degrees: <%= temp %></p>
+    <img src="<%= icon %>">
+<% } %>
