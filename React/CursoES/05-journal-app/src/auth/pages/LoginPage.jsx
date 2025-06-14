@@ -1,13 +1,37 @@
+import { useDispatch, useSelector } from 'react-redux'
 import { Link as RouterLink } from 'react-router'
+
 import { Button, Grid, Link, TextField, Typography } from "@mui/material"
 import { Google } from "@mui/icons-material";
+
 import { AuthLayout } from '../layout/AuthLayout';
+import { useForm } from '../../hooks';
+import { authCheck, startGoogleSignIn } from '../../store/auth/thunks';
+import { useMemo } from 'react';
 
 export const LoginPage = () => {
+
+  const { status } = useSelector(state => state.auth)
+  const dispatch = useDispatch()
+  const { email, password, onInputChange } = useForm({email: 'you@example.com', password: '123456'})
+
+  const isAuthenticated = useMemo(()=> status === 'checking',[status]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log({email, password})
+    dispatch(authCheck())
+  }
+
+  const handleGoogleSignIn = () => {
+    console.log('Google');
+    dispatch(startGoogleSignIn())
+  }
+
   return (
       <AuthLayout title='Login'>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <Grid container>
             <Grid size={12} sx={{mt: 2}}>
               <TextField 
@@ -15,6 +39,9 @@ export const LoginPage = () => {
               type="email" 
               placeholder="mail@example.com"
               fullWidth
+              name='email'
+              value={email}
+              onChange={onInputChange}
               />
             </Grid>
 
@@ -24,17 +51,29 @@ export const LoginPage = () => {
               type="password" 
               placeholder="password"
               fullWidth
+              name='password'
+              value={password}
+              onChange={onInputChange}
               />
             </Grid>
 
             <Grid container spacing={2} sx={{mb: 2, mt: 2}} size={12}>
               <Grid size={{xs: 12, sm: 6}}>
-                <Button variant="contained" fullWidth>
+                <Button
+                  disabled={isAuthenticated} 
+                  type='submit' 
+                  variant="contained" 
+                  fullWidth
+                >
                   Login
                 </Button>
               </Grid>
               <Grid size={{xs: 12, sm: 6}}>
-                <Button variant="contained" fullWidth>
+                <Button
+                  disabled={isAuthenticated}  
+                  onClick={handleGoogleSignIn} 
+                  variant="contained" fullWidth
+                >
                   <Google/>
                   <Typography sx={{ml: 1}}>Google</Typography>
                 </Button>
