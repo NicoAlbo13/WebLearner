@@ -9,11 +9,17 @@ import { useForm } from '../../hooks';
 import { startGoogleSignIn, startLogInWithEmail } from '../../store/auth/thunks';
 import { useMemo } from 'react';
 
+const formData = {
+  email: '',
+  password: ''
+}
+
 export const LoginPage = () => {
 
   const { status, errorMessage } = useSelector(state => state.auth)
+
   const dispatch = useDispatch()
-  const { email, password, onInputChange } = useForm({email: 'albo@google.com', password: '123456'})
+  const { email, password, onInputChange } = useForm(formData);
 
   const isAuthenticated = useMemo(()=> status === 'checking',[status]);
 
