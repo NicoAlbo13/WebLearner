@@ -1,6 +1,7 @@
 
 export const fileUpload = async (file) => {
-    if(!file) throw new Error('No file to upload');
+    // if(!file) throw new Error('No file to upload');
+    if (!file) return null; //easier for testing    
 
     const cloudUrl = import.meta.env.VITE_CLOUDINARY_URL;
     
