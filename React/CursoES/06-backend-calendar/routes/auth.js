@@ -8,6 +8,7 @@ import { check } from 'express-validator'
 
 import {loginUser, newUser, validToken} from '../controllers/auth.js'
 import { bodyValidator } from '../middlewares/body-validator.js';
+import { jwtValidator } from '../middlewares/jwt-validator.js';
 
 const router = Router();
 
@@ -29,6 +30,6 @@ router.post('/',
     ],
     loginUser)
 
-router.get('/renew', validToken)
+router.get('/renew', jwtValidator, validToken)
 
 export default router;
