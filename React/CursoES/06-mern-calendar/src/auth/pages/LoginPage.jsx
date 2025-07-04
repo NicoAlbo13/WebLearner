@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { useAuthStore } from '../../../hooks/useAuthStore';
-import { useForm } from '../../../hooks/useForm';
+import { useForm } from '../../hooks/useForm';
+import { useAuthStore } from '../../hooks/useAuthStore';
 import './login.css';
 
 const loginForm = {

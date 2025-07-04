@@ -1,6 +1,6 @@
 import { addHours } from "date-fns"
-import { useCalendarStore } from "../../../hooks/useCalendarStore"
-import { useUiStore } from "../../../hooks/useUiStore"
+import { useCalendarStore } from "../../hooks/useCalendarStore"
+import { useUiStore } from "../../hooks/useUiStore"
 
 export const FabAddNew = () => {
 

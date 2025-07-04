@@ -7,8 +7,8 @@ import enUS from 'date-fns/locale/en-US'
 import { Navbar } from "../components/Navbar"
 import { CalendarEvent } from '../components/CalendarEvent'
 import { CalendarModal } from '../components/CalendarModal'
-import { useUiStore } from '../../../hooks/useUiStore'
-import { useCalendarStore } from '../../../hooks/useCalendarStore'
+import { useUiStore } from '../../hooks/useUiStore'
+import { useCalendarStore } from '../../hooks/useCalendarStore'
 import { FabAddNew } from '../components/FabAddNew'
 import { FabDelete } from '../components/FabDelete'
 

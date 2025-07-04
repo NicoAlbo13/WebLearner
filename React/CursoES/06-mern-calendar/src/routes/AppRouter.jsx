@@ -1,7 +1,7 @@
 import {Navigate, Route, Routes} from 'react-router'
 import { LoginPage } from '../auth/pages/LoginPage'
 import { CalendarPage } from '../calendar/pages/CalendarPage'
-import { useAuthStore } from '../../hooks/useAuthStore'
+import { useAuthStore } from '../hooks/useAuthStore'
 import { useEffect } from 'react'
 
 export const AppRouter = () => {

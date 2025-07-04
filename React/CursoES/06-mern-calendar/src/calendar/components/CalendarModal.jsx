@@ -7,8 +7,8 @@ import Swal from 'sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
 
 import "react-datepicker/dist/react-datepicker.css";
-import { useUiStore } from '../../../hooks/useUiStore';
-import { useCalendarStore } from '../../../hooks/useCalendarStore';
+import { useUiStore } from '../../hooks/useUiStore';
+import { useCalendarStore } from '../../hooks/useCalendarStore';
 
 
 export const CalendarModal = () => {
