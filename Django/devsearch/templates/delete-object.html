@@ -1,0 +1,22 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<!-- Main Section -->
+<main class="formPage my-xl">
+    <div class="content-box">
+        <div class="formWrapper">
+            <a class="backButton" href={% url "account" %}><i class="fas fa-angle-left" style="font-size: 2.5rem;"></i></a>
+            <br>
+
+            <form class="form" action="" method="POST">
+                {% csrf_token %}
+                <p>Are you sure you want to delete this <b>"{{ item }}"</b>? <p>
+                <a class="btn btn--main btn--lg  my-md" href={{ request.GET.next }} style="margin-right: 30px;">Cancel</a>
+                <input class="btn btn--sub btn--lg  my-md" type="submit" value="Confirm" />
+            </form>
+        </div>
+    </div>
+</main>
+
+{% endblock content %}
