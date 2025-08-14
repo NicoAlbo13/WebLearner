@@ -16,7 +16,7 @@ export const useGetData = () => {
         } finally {
             setTimeout(()=>{
                 loading.value = false;
-            }, 1500)
+            }, 300)
         }
     };
 

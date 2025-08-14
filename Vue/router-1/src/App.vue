@@ -14,6 +14,7 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/" class="btn btn-outline-success">Home</RouterLink>
         <RouterLink to="/about" class="btn btn-outline-success">About</RouterLink>
         <RouterLink to="/pokemon" class="btn btn-outline-success">Pokemons</RouterLink>
+        <RouterLink to="/favorites" class="btn btn-outline-danger">Favorites</RouterLink>
       </div>
     </div>
   </nav>

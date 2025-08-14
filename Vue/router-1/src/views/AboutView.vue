@@ -1,15 +1,21 @@
-<template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
-</template>
+<script setup>
+import { useCounterState } from '@/store/counter';
+import { storeToRefs } from 'pinia';
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
+const useCounter = useCounterState()
+
+const {increment, decrement} = useCounter;
+
+const { counter, double, half } = storeToRefs(useCounter);
+
+</script>
+
+<template>
+  <main>
+    <h1>About</h1>
+    <h2>Counter: {{ counter }}</h2>
+    <h2>Double: {{ double }} | Half: {{ half }}</h2>
+    <button @click="increment" class="btn btn-outline-danger m-2">+</button>
+    <button @click="decrement" class="btn btn-outline-danger m-2">-</button>
+  </main>
+</template>
