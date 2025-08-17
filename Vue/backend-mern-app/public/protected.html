@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Ruta protegida</title>
+    </head>
+    <body>
+        <h1>Ruta protegida</h1>
+        <div id="app">
+            <h2>Email</h2>
+        </div>
+        <button id="logout">Logout</button>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", async (e) => {
+                const app = document.querySelector("#app");
+                try {
+                    const resToken = await fetch("/api/auth/refresh", {
+                        credentials: "include",
+                    });
+                    console.log(resToken.ok, resToken.status);
+                    const { token } = await resToken.json();
+                    console.log(token);
+
+                    const res = await fetch("/api/auth/protected", {
+                        headers: {
+                            Authorization: "Bearer " + token,
+                        },
+                    });
+                    console.log(res.ok, res.status);
+
+                    if (!res.ok) {
+                        window.location.href = "/";
+                    }
+
+                    const result = await res.json();
+                    console.log(result);
+
+                    app.innerHTML = `
+                        <h2>Email: ${result.email}</h2>
+                    `;
+                } catch (error) {
+                    console.log(error);
+                }
+
+                const logout = document.querySelector("#logout");
+                logout.addEventListener("click", async () => {
+                    const res = await fetch("/api/auth/logout");
+                    console.log(res.ok, res.status);
+                    if (res.ok) {
+                        window.location.href = "/";
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
