@@ -25,7 +25,9 @@ app.use(cors({
             return callback(null, origin);
         }
         return callback(new Error('Not allowed by CORS'));
-}
+    },
+    //Activate credentials on cors so we can receive the cookie
+    credentials: true,
 }))
 
 //Middlewares
