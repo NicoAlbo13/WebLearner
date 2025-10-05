@@ -1,0 +1,182 @@
+{% extends "main.html" %}
+
+{% block content %}
+<main class="container">
+
+  <!-- Goal header -->
+  <header class="goal-header" style="margin-bottom: var(--sp-6);">
+
+    {% if goal.api_image %}
+    <img
+      src="{% if goal.imageURL == '/images/default.jpg' or goal.imageURL == ''%}{{ goal.api_image }}{% else %}{{ goal.imageURL }}{% endif %}"
+      alt="{{ goal.title }}"
+      class="goal-img"
+      loading="lazy"
+      decoding="async"
+      style="aspect-ratio: 16/9;"
+    />
+    {% endif %}
+
+    {% if goal.tags.all %}
+    <ul class="flex" style="flex-wrap: wrap; gap: var(--sp-2);">
+      {% for tag in goal.tags.all %}
+        <li class="tag tag--blue">{{ tag }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <h1>{{ goal.title }}</h1>
+
+  </header>
+
+  <!-- Layout: main + aside -->
+  <section class="grid" style="grid-template-columns: 2fr 1fr; gap: var(--sp-6);">
+    <!-- MAIN -->
+    <div class="flex-col">
+
+      {% if goal.description %}
+      <article class="card">
+        <h2 style="margin-bottom: var(--sp-2);">Overview</h2>
+        <p class="muted" style="white-space: pre-wrap;">{{ goal.description }}</p>
+      </article>
+      {% endif %}
+
+      <!-- Tasks -->
+      <section class="card">
+        <div class="center-between" style="margin-bottom: var(--sp-3);">
+          <h2>Tasks</h2>
+          <span class="badge">Total: {{ goal.total_tasks }}</span>
+        </div>
+
+        {% if goal.total_tasks %}
+        <div class="progress" aria-label="Completion progress" style="margin-bottom: var(--sp-4);">
+          <div class="progress-bar" style="width: {{ goal.completion_rate|default:0 }}%;">
+            <span class="sr-only">{{ goal.completion_rate }}%</span>
+          </div>
+        </div>
+        <p class="muted" style="margin-top:-.5rem; margin-bottom: var(--sp-4);">
+          Completed: <strong>{{ goal.completion_rate }}%</strong>
+        </p>
+        {% endif %}
+
+        <ul class="stack-list">
+          {% for task in tasks %}
+          <li class="stack-item">
+            <div class="center-between" style="align-items:flex-start;">
+              <h4 style="{% if task.completed %}text-decoration: line-through;{% endif %} margin:0;">
+                {{ task.title }}
+              </h4>
+              {% if task.completed %}
+                <span class="badge badge--success">Completed</span>
+              {% else %}
+                <span class="badge badge--danger">Pending</span>
+              {% endif %}
+            </div>
+            <small class="muted">{{ task.created|date:"M j, Y" }}</small>
+            {% if task.description %}
+            <p style="margin-top: var(--sp-2);">{{ task.description }}</p>
+            {% endif %}
+          </li>
+          {% empty %}
+          <li class="stack-item">
+            <p class="muted">No tasks yet.</p>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      <!-- Comments -->
+      <section class="card">
+        <div class="center-between" style="margin-bottom: var(--sp-3);">
+          <h2>Comments</h2>
+          <div class="flex" style="gap: var(--sp-2);">
+            <span class="badge">Total: {{ goal.total_vote }}</span>
+            <span class="badge">Like ratio: {{ goal.vote_ratio }}%</span>
+          </div>
+        </div>
+
+        <ul class="stack-list">
+
+          <li class="stack-item">
+            {% if request.user.profile.id in goal.commentors %}
+            <p class="muted">You have already commented</p>
+            {% elif request.user.profile.id == goal.owner.id %}
+            <p class="muted">This is your goal</p>
+            {% elif request.user.is_authenticated %}
+            <form method="post" style="display:flex; flex-direction:column; gap:1rem;">
+              {% csrf_token %}
+              {% for field in form %}
+                <label>{{ field.label }}</label>
+                {{ field }}
+              {% endfor %}
+
+              <div style="display:flex; justify-content:flex-end;">
+                <button type="submit" class="btn btn-dark">
+                  <i class="fa-solid fa-comment"></i> Comment
+                </button>
+              </div>
+            </form>
+            {% else %}
+            <p class="muted"><a href="{% url "login" %}?next={{request.path}}"><span style="color: #4da6ff">Log in</span> if you want to comment this goal.</a></p>
+          {% endif %}
+          </li>
+
+          {% for comment in goal.comment_set.all %}
+          <li class="stack-item">
+            <div class="profile-header">
+            <img class="profile-pic" src="{{ comment.owner.profile_img.url }}" alt="{{ comment.owner.name }}">
+            <div class="profile-info">
+              <strong>{{ comment.owner.name }} | {% if comment.value == "up" %}<i class="fa-solid fa-thumbs-up" style="font-size: 1.5em"></i>{% else %}<i class="fa-solid fa-thumbs-down" style="font-size: 1.5em"></i>{% endif %}</strong>
+            </div>
+            </div>
+            <small class="muted">{{ comment.created }}</small>
+            {% if comment.body %}
+            <p style="margin-top: var(--sp-2); white-space: pre-wrap;">
+              {{ comment.body }}
+            </p>
+            {% endif %}
+          </li>
+          {% empty %}
+          <li class="stack-item">
+            <p class="muted">No comments yet.</p>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+
+    </div>
+
+    {% comment %} Side data {% endcomment %}
+    <aside class="flex-col" style="gap: var(--sp-4);">
+      <div class="card">
+        <a href="{% url 'profile' goal.owner.id %}" class="stretched-link" style="display:block">
+        <h3 style="margin-bottom: var(--sp-3);">Owner</h3>
+        <div class="profile-header">
+          <img class="profile-pic" src="{{ goal.owner.profile_img.url }}" alt="{{ goal.owner.name }}">
+          <div class="profile-info">
+            <strong>{{ goal.owner.name }}</strong>
+            <p class="muted clamp-2">{{ goal.owner.bio }}</p>
+          </div>
+        </div>
+        </a>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom: var(--sp-3);">Goal stats</h3>
+        <ul class="meta">
+          <li><span class="muted">Task{{ goal.total_tasks|pluralize:'s' }}</span><span>{{ goal.total_tasks }}</span></li>
+          <li><span class="muted">Completion</span><span>{{ goal.completion_rate }}%</span></li>
+          <li><span class="muted">Vote{{ goal.total_vote|pluralize:'s' }}</span><span>{{ goal.total_vote }}</span></li>
+          <li><span class="muted">Like ratio</span><span>{{ goal.vote_ratio }}%</span></li>
+        </ul>
+      </div>
+
+      {% if goal.related_link %}
+      <a href="{{goal.related_link}}" style="margin-left: 5px" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Related link</a>
+      {% endif %}
+
+    </aside>
+
+  </section>
+
+</main>
+{% endblock content %}

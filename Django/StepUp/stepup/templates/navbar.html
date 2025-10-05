@@ -1,0 +1,26 @@
+{% load static %}
+
+<nav class="navbar">
+  <div class="nav-container nav-inner">
+
+    <a href="/" class="nav-logo flex" style="align-items:center; gap:.5rem;">
+      <img src="{% static 'images/stepup-logo.png' %}" alt="StepUp" style="height:32px; width:auto;">
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="{% url 'profiles' %}">People</a></li>
+      <li><a href="{% url 'goals' %}">Goals</a></li>
+      {% if request.user.is_authenticated %}
+        <li><a href="{% url 'account' %}">My Account</a></li>
+        <li>
+          <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        </li>
+      {% else %}
+        <li>
+          <a href="{% url 'login' %}" class="btn btn-primary">Login / Sign Up</a>
+        </li>
+      {% endif %}
+    </ul>
+    <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+  </div>
+</nav>

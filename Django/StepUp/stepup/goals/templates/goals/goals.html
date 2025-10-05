@@ -1,0 +1,77 @@
+{% extends "main.html" %}
+
+{% block content %}
+<main class="container">
+
+  <!-- Header / actions -->
+  <header class="flex center-between" style="margin-bottom: var(--sp-6);">
+    <div>
+      <h1>Goals</h1>
+      <p class="muted">{{ goals|length }} total</p>
+    </div>
+
+    <!-- Optional: search/filter (wire up to your view) -->
+    <form class="search-bar" method="get" action="">
+      <input type="search" name="q" value="{{ search_query }}" placeholder="Search goals…" aria-label="Search goals">
+      <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    </form>
+  </header>
+
+
+  <!-- Cards grid -->
+  <section class="grid goals-grid" aria-label="Goals list">
+    {% for goal in goals %}
+    <article class="card" role="article">
+      <a href="{% url 'goal' goal.id %}" class="stretched-link" style="display:block">
+        <img
+          src="{% if goal.imageURL == '/images/default.jpg' or goal.imageURL == '' %}{{ goal.api_image }}{% else %}{{ goal.imageURL }}{% endif %}"
+          alt="{{ goal.title }}"
+          class="goal-img"
+          loading="lazy"
+          decoding="async"
+          style="aspect-ratio: 16/9;"
+        />
+
+        <div class="progress" aria-label="Completion progress" style="margin-bottom: var(--sp-4); margin-top: var(--sp-4)">
+          <div class="progress-bar" style="width: {{ goal.completion_rate|default:0 }}%;">
+            <span class="sr-only">{{ goal.completion_rate }}%</span>
+          </div>
+        </div>
+        <p class="muted" style="margin-top:-.5rem; margin-bottom: var(--sp-4);">
+          <strong>{{ goal.completion_rate }}%</strong>
+        </p>
+
+        <h3 style="margin-top: var(--sp-4); margin-bottom: var(--sp-2);">
+          {{ goal.title }}
+        </h3>
+
+        <p class="goal-owner">
+          <a href="{% url 'profile' goal.owner.id %}">{{ goal.owner.name }}</a>
+        </p>
+
+        {% if goal.description %}
+          <p class="muted" style="
+            display:-webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow:hidden;
+            min-height: calc(2 * 1em * var(--lh));
+          ">
+            {{ goal.description }}
+          </p>
+        {% endif %}
+
+        {% if goal.tags.all %}
+        <ul class="flex" style="flex-wrap: wrap; gap: var(--sp-2);" aria-label="Tags">
+          {% for tag in goal.tags.all %}
+            <li class="tag tag--blue">{{ tag }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </a>
+    </article>
+    {% endfor %}
+  </section>
+
+</main>
+{% endblock content %}

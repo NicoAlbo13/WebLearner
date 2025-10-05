@@ -1,0 +1,71 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+{% if page == "login" %}
+
+<main class="form-page">
+  <article class="form-card">
+    <div class="form-header">
+      <a href="javascript:history.back()" class="back-btn" aria-label="Go back" style="text-decoration: none;">
+        <i class="fa-solid fa-angle-left"></i>
+      </a>
+      <h2 style="margin:0;">Login</h2>
+    </div>
+
+    <form class="flex-col" method="POST" action="">
+      {% csrf_token %}
+      <div class="form-field">
+        <label for="username">Username</label>
+        <input type="text" id="username"  name="username" placeholder="Enter your username" required>
+      </div>
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <div class="form-links">
+    <p class="muted">
+      Don’t have an account?
+      <a href="{% url "register" %}">Sign up</a>
+    </p>
+  </div>
+  </article>
+</main>
+
+{% else %}
+
+<main class="form-page">
+  <article class="form-card">
+    <div class="form-header">
+      <a href="javascript:history.back()" class="back-btn" aria-label="Go back" style="text-decoration: none;">
+        <i class="fa-solid fa-angle-left"></i>
+      </a>
+      <h2 style="margin:0;">Register</h2>
+    </div>
+
+    <form class="flex-col" method="POST" action="">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-field">
+        <label for="username">{{field.label}}</label>
+        {{ field }}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <div class="form-links">
+    <p class="muted">
+      Already have an account?
+      <a href="{% url "login" %}">Login</a>
+    </p>
+  </div>
+  </article>
+</main>
+
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,209 @@
+{% extends "main.html" %}
+
+{% block content %}
+<main class="container">
+
+  <!-- header -->
+  <header class="card">
+  <div class="profile-header" style="justify-content: space-between; align-items: flex-start;">
+
+    <!-- LEFT: avatar + info -->
+    <div class="flex" style="gap: var(--sp-4);">
+      <img
+        class="profile-pic"
+        src="{{ profile.profile_img.url }}"
+        alt="{{ profile.name }}"
+        loading="lazy"
+        decoding="async"
+        style="width: 96px; height: 96px;"
+      />
+      <div class="profile-info">
+        <h1 style="margin-bottom: var(--sp-1);">{{ profile.name }}</h1>
+        <p class="muted" style="margin: 0;">@{{ profile.username }}</p>
+
+        {% if profile.synopsis %}
+        <p class="muted clamp-2" style="margin-top: var(--sp-2);">
+          {{ profile.synopsis }}
+        </p>
+        {% endif %}
+
+        <div class="flex" style="flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-3);">
+          {% if profile.country %}
+          <span class="flex" style="align-items:center; gap: .5rem;">
+            {% if profile.flag_url %}
+              <img src="{{ profile.flag_url }}" alt="{{ profile.country }}"
+                   style="width: 20px; height: 14px; border-radius: 2px; object-fit: cover;">
+            {% endif %}
+            <span class="muted">Based in <strong>{{ profile.country|upper }}</strong></span>
+          </span>
+          {% endif %}
+
+          <!-- Socials -->
+          <span class="flex" style="gap: var(--sp-2);">
+            {% if profile.social_instagram %}
+              <a class="icon-btn" href="{{ profile.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+              </a>
+            {% endif %}
+            {% if profile.social_twitter %}
+              <a class="icon-btn" href="{{ profile.social_twitter }}" target="_blank" rel="noopener" aria-label="Twitter/X">
+                <i class="fa-brands fa-x-twitter"></i>
+              </a>
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+</header>
+
+  <!-- Layout -->
+  <section class="grid" style="grid-template-columns: 2fr 1fr; gap: var(--sp-6); margin-top: var(--sp-6);">
+
+    <!-- MAIN -->
+    <div class="flex-col">
+      <!-- About -->
+      <article class="card">
+        <h2 style="margin-bottom: var(--sp-2);">About Me</h2>
+        {% if profile.bio %}
+          <p style="white-space: pre-wrap;">{{ profile.bio }}</p>
+        {% else %}
+          <p class="muted">No bio yet.</p>
+        {% endif %}
+      </article>
+
+      <!-- Goals grid -->
+      <section class="card">
+        <div class="center-between" style="margin-bottom: var(--sp-3);">
+          <h2>Goals</h2>
+          <span class="badge">
+            {% with total=profile.goal_set.all|length %}Total: {{ total }}{% endwith %}
+          </span>
+        </div>
+
+        {% if profile.goal_set.all %}
+        <div class="grid account-grid">
+          {% for goal in profile.goal_set.all %}
+          <article class="card">
+            <a href="{% url 'goal' goal.id %}" style="display:block">
+              {% if goal.api_image %}
+              <img
+                src="{% if goal.imageURL == '/images/default.jpg' or goal.imageURL == '' %}{{ goal.api_image }}{% else %}{{ goal.imageURL }}{% endif %}"
+                alt="{{ goal.title }}"
+                class="goal-img"
+                loading="lazy"
+                decoding="async"
+                style="aspect-ratio: 16/9;"
+              />
+              {% endif %}
+
+              <div class="progress" aria-label="Completion progress" style="margin-bottom: var(--sp-4); margin-top: var(--sp-4)">
+                <div class="progress-bar" style="width: {{ goal.completion_rate|default:0 }}%;">
+                  <span class="sr-only">{{ goal.completion_rate }}%</span>
+                </div>
+              </div>
+              <p class="muted" style="margin-top:-.5rem; margin-bottom: var(--sp-4);">
+                <strong>{{ goal.completion_rate }}%</strong>
+              </p>
+
+              <h3 style="margin-top: var(--sp-4); margin-bottom: var(--sp-2);">
+                {{ goal.title }}
+              </h3>
+
+              {% if goal.description %}
+              <p class="muted clamp-2">
+                {{ goal.description }}
+              </p>
+              {% endif %}
+
+              {% if goal.tags.all %}
+              <ul class="flex" style="flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-3);">
+                {% for tag in goal.tags.all %}
+                  <li class="tag tag--blue">
+                    {{ tag }}
+                  </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            </a>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+          <p class="muted">No goals yet.</p>
+        {% endif %}
+      </section>
+
+      <!-- Tasks -->
+      <section class="card">
+        <div class="center-between" style="margin-bottom: var(--sp-3);">
+          <h2>Tasks</h2>
+          {% if tasks %}
+            <span class="badge">Total: {{ tasks|length }}</span>
+          {% endif %}
+        </div>
+
+        <ul class="stack-list">
+          {% for task in tasks %}
+          <li class="stack-item">
+            <div class="center-between" style="align-items:flex-start;">
+              <h4 style="margin:0; {% if task.completed %}text-decoration: line-through;{% endif %}">
+                {{ task.title }} | {{ task.goal.title }}
+              </h4>
+              {% if task.completed %}
+                <span class="badge badge--success">Completed</span>
+              {% else %}
+                <span class="badge badge--danger">Pending</span>
+              {% endif %}
+            </div>
+            {% if task.created %}
+              <small class="muted">{{ task.created|date:"M j, Y" }}</small>
+            {% endif %}
+            {% if task.description %}
+              <p style="margin-top: var(--sp-2);">{{ task.description }}</p>
+            {% endif %}
+          </li>
+          {% empty %}
+          <li class="stack-item">
+            <p class="muted">No tasks yet.</p>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+    </div>
+
+    <!-- ASIDE COLUMN -->
+    <aside class="flex-col" style="gap: var(--sp-4);">
+      <div class="card">
+        <h3 style="margin-bottom: var(--sp-3);">Profile Info</h3>
+        <ul class="meta">
+          {% if profile.country %}
+          <li><span class="muted">Country</span><span>{{ profile.country|upper }}</span></li>
+          {% endif %}
+          {% if profile.username %}
+          <li><span class="muted">Username</span><span>@{{ profile.username }}</span></li>
+          {% endif %}
+          {% if profile.created %}
+          <li><span class="muted">Joined</span><span>{{ profile.created|date:"M j, Y" }}</span></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      {% if profile.interest_set.all %}
+      <div class="card">
+        <h3 style="margin-bottom: var(--sp-3);">Interests</h3>
+        <ul class="flex" style="flex-wrap:wrap; gap:var(--sp-2);">
+          {% for interest in profile.interest_set.all %}
+            <li class="tag tag--blue">
+              {{ interest.name }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+    </aside>
+
+  </section>
+
+</main>
+{% endblock content %}
